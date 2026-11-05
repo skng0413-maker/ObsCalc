@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinical ObsCalc - Obstetrical Calculator</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4 flex justify-center">
+
+  <div class="max-w-md w-full space-y-5">
+    
+    <!-- Top Header -->
+    <div class="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="bg-sky-600 p-2.5 rounded-xl text-white shadow-md shadow-sky-600/20">
+          <i data-lucide="stethoscope" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-slate-900 leading-tight">Clinical ObsCalc</h1>
+          <p class="text-xs text-slate-500 font-medium">Obstetrical Date & GA Engine</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <button id="reset-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Today Banner -->
+    <div class="bg-sky-50 border border-sky-100 px-4 py-2.5 rounded-xl flex items-center justify-between text-xs text-sky-800">
+      <span class="flex items-center gap-1.5 font-medium">
+        <i data-lucide="calendar" class="w-4 h-4 text-sky-600"></i> Today's Reference Date:
+      </span>
+      <span id="today-date-display" class="font-bold text-sky-900"></span>
+    </div>
+
+    <!-- Card 1: LMP to EDC -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="calendar-days" class="w-5 h-5 text-sky-600"></i>
+          <h2 class="font-bold text-slate-800 text-sm">1. LMP TO EDC</h2>
+        </div>
+        <span class="text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">Naegele's Rule</span>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1">Last Menstrual Period (LMP)</label>
+        <input type="date" id="lmp-input" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all">
+      </div>
+
+      <div class="bg-slate-50/80 border border-slate-100 rounded-xl p-3.5 space-y-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500 font-medium">EDC:</span>
+          <span id="c1-edc" class="font-bold text-slate-900 text-sm">--</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500 font-medium">Current GA (Today):</span>
+          <span id="c1-ga" class="font-bold text-sky-700">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: USG to EDC -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="scan" class="w-5 h-5 text-emerald-600"></i>
+          <h2 class="font-bold text-slate-800 text-sm">2. USG TO EDC</h2>
+        </div>
+        <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">Scan Dating</span>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1">Ultrasound Scan Date</label>
+        <input type="date" id="usg-date-input" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">GA at USG (Weeks)</label>
+          <input type="number" id="usg-weeks-input" value="12" min="0" max="42" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">GA at USG (Days)</label>
+          <input type="number" id="usg-days-input" value="0" min="0" max="6" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+        </div>
+      </div>
+
+      <div class="bg-slate-50/80 border border-slate-100 rounded-xl p-3.5 space-y-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500 font-medium">EDC:</span>
+          <span id="c2-edc" class="font-bold text-slate-900 text-sm">--</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500 font-medium">Estimated LMP:</span>
+          <span id="c2-lmp" class="font-bold text-slate-800">--</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500 font-medium">Current GA (Today):</span>
+          <span id="c2-ga" class="font-bold text-emerald-700">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: EDC to GA -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="calculator" class="w-5 h-5 text-amber-600"></i>
+          <h2 class="font-bold text-slate-800 text-sm">3. EDC TO GA</h2>
+        </div>
+        <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">GA Check</span>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1">EDC</label>
+        <input type="date" id="edc3-input" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1">Target Date</label>
+        <input type="date" id="target-date-input" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+      </div>
+
+      <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3.5 flex justify-between items-center text-xs">
+        <span class="text-amber-900 font-medium">Gestational Age:</span>
+        <span id="c3-ga" class="font-bold text-amber-900 text-sm">--</span>
+      </div>
+    </div>
+
+    <!-- Card 4: EDC to Target Gestational Age -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="calendar-check-2" class="w-5 h-5 text-teal-600"></i>
+          <h2 class="font-bold text-slate-800 text-sm">4. EDC TO TARGET GESTATIONAL AGE</h2>
+        </div>
+        <span class="text-[11px] font-semibold text-teal-700 bg-teal-50 border border-teal-200 px-2.5 py-0.5 rounded-full">Date Target</span>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1">EDC</label>
+        <input type="date" id="edc4-input" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Target GA (Weeks)</label>
+          <input type="number" id="target-weeks-input" value="20" min="0" max="45" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Target GA (Days)</label>
+          <input type="number" id="target-days-input" value="0" min="0" max="6" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+        </div>
+      </div>
+
+      <div class="bg-teal-50/50 border border-teal-100 rounded-xl p-3.5 flex justify-between items-center text-xs">
+        <span class="text-teal-900 font-medium">Calendar Date:</span>
+        <span id="c4-date" class="font-bold text-teal-900 text-sm">--</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Helper functions for date arithmetic
+    function formatDateDisplay(d) {
+      if (!d || isNaN(d.getTime())) return '--';
+      const year = d.getFullYear();
+      const month = d.getMonth() + 1;
+      const day = d.getDate();
+      return `${year}年${month}月${day}日`;
+    }
+
+    function formatDateInput(d) {
+      if (!d || isNaN(d.getTime())) return '';
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function parseInputDate(val) {
+      if (!val) return null;
+      const parts = val.split('-');
+      if (parts.length !== 3) return null;
+      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    }
+
+    function addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    function diffDays(d1, d2) {
+      const t1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate()).getTime();
+      const t2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate()).getTime();
+      return Math.round((t1 - t2) / (1000 * 60 * 60 * 24));
+    }
+
+    function formatGA(days) {
+      if (days < 0) return 'Not pregnant yet';
+      const wks = Math.floor(days / 7);
+      const d = days % 7;
+      return `${wks} wks ${d} days`;
+    }
+
+    const today = new Date();
+    document.getElementById('today-date-display').textContent = formatDateDisplay(today);
+
+    // Inputs
+    const lmpInput = document.getElementById('lmp-input');
+    const usgDateInput = document.getElementById('usg-date-input');
+    const usgWeeksInput = document.getElementById('usg-weeks-input');
+    const usgDaysInput = document.getElementById('usg-days-input');
+    const edc3Input = document.getElementById('edc3-input');
+    const targetDateInput = document.getElementById('target-date-input');
+    const edc4Input = document.getElementById('edc4-input');
+    const targetWeeksInput = document.getElementById('target-weeks-input');
+    const targetDaysInput = document.getElementById('target-days-input');
+
+    // Default dates based on images (2026-11-05)
+    const defaultDateStr = '2026-11-05';
+    lmpInput.value = defaultDateStr;
+    usgDateInput.value = defaultDateStr;
+    edc3Input.value = defaultDateStr;
+    targetDateInput.value = defaultDateStr;
+    edc4Input.value = defaultDateStr;
+
+    function updateCard1() {
+      const lmp = parseInputDate(lmpInput.value);
+      if (!lmp) {
+        document.getElementById('c1-edc').textContent = '--';
+        document.getElementById('c1-ga').textContent = '--';
+        return;
+      }
+      const edc = addDays(lmp, 280);
+      const currentGADays = diffDays(today, lmp);
+      document.getElementById('c1-edc').textContent = formatDateDisplay(edc);
+      document.getElementById('c1-ga').textContent = formatGA(currentGADays);
+    }
+
+    function updateCard2() {
+      const usgDate = parseInputDate(usgDateInput.value);
+      const wks = parseInt(usgWeeksInput.value, 10) || 0;
+      const days = parseInt(usgDaysInput.value, 10) || 0;
+      if (!usgDate) {
+        document.getElementById('c2-edc').textContent = '--';
+        document.getElementById('c2-lmp').textContent = '--';
+        document.getElementById('c2-ga').textContent = '--';
+        return;
+      }
+      const totalUSGDays = wks * 7 + days;
+      const estLMP = addDays(usgDate, -totalUSGDays);
+      const edc = addDays(estLMP, 280);
+      const currentGADays = diffDays(today, estLMP);
+
+      document.getElementById('c2-edc').textContent = formatDateDisplay(edc);
+      document.getElementById('c2-lmp').textContent = formatDateDisplay(estLMP);
+      document.getElementById('c2-ga').textContent = formatGA(currentGADays);
+    }
+
+    function updateCard3() {
+      const edc = parseInputDate(edc3Input.value);
+      const targetDate = parseInputDate(targetDateInput.value);
+      if (!edc || !targetDate) {
+        document.getElementById('c3-ga').textContent = '--';
+        return;
+      }
+      const estLMP = addDays(edc, -280);
+      const gaDays = diffDays(targetDate, estLMP);
+      document.getElementById('c3-ga').textContent = formatGA(gaDays);
+    }
+
+    function updateCard4() {
+      const edc = parseInputDate(edc4Input.value);
+      const wks = parseInt(targetWeeksInput.value, 10) || 0;
+      const days = parseInt(targetDaysInput.value, 10) || 0;
+      if (!edc) {
+        document.getElementById('c4-date').textContent = '--';
+        return;
+      }
+      const estLMP = addDays(edc, -280);
+      const totalTargetDays = wks * 7 + days;
+      const resultDate = addDays(estLMP, totalTargetDays);
+      document.getElementById('c4-date').textContent = formatDateDisplay(resultDate);
+    }
+
+    function updateAll() {
+      updateCard1();
+      updateCard2();
+      updateCard3();
+      updateCard4();
+    }
+
+    // Attach listeners
+    lmpInput.addEventListener('input', updateCard1);
+    usgDateInput.addEventListener('input', updateCard2);
+    usgWeeksInput.addEventListener('input', updateCard2);
+    usgDaysInput.addEventListener('input', updateCard2);
+    edc3Input.addEventListener('input', updateCard3);
+    targetDateInput.addEventListener('input', updateCard3);
+    edc4Input.addEventListener('input', updateCard4);
+    targetWeeksInput.addEventListener('input', updateCard4);
+    targetDaysInput.addEventListener('input', updateCard4);
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      lmpInput.value = defaultDateStr;
+      usgDateInput.value = defaultDateStr;
+      usgWeeksInput.value = '12';
+      usgDaysInput.value = '0';
+      edc3Input.value = defaultDateStr;
+      targetDateInput.value = defaultDateStr;
+      edc4Input.value = defaultDateStr;
+      targetWeeksInput.value = '20';
+      targetDaysInput.value = '0';
+      updateAll();
+    });
+
+    // Initial calculation run
+    updateAll();
+  </script>
+</body>
+</html>
